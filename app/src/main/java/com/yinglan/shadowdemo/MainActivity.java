@@ -62,6 +62,10 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                         break;
                     case 4:
                         res = R.mipmap.lotus;
+                        resId = 5;
+                        break;
+                    case 5:
+                        res = R.drawable.bg_shape;
                         resId = 1;
                         break;
                 }
@@ -69,6 +73,9 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                     shadow.setImageResource(res);
                 else
                     shadow.setImageDrawable(getResources().getDrawable(res));
+                if (resId == 5) {
+                    shadow.setImageResource(R.drawable.bg_shape);
+                }
             }
         });
 

@@ -12,5 +12,7 @@
         <attr name="blur" format="dimension" />
         <attr name="shadowColor" format="color" />
         <attr name="src" format="reference" />
+        <attr name="srcWidth" format="dimension" />
+        <attr name="srcHeight" format="dimension" />
     </declare-styleable>
 </resources>

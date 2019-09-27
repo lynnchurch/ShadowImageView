@@ -9,11 +9,14 @@
 
     <com.yinglan.shadowimageview.ShadowImageView
         android:id="@+id/shadow"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="80dp"
         app:round="0dp"
         app:shadowColor="@color/colorPrimary"
-        app:src="@mipmap/lotus" />
+        app:src="@mipmap/lotus"
+        app:srcHeight="200dp"
+        app:srcWidth="200dp" />
 
     <android.support.v7.widget.AppCompatSeekBar
         android:id="@+id/sbLeftTopRound"

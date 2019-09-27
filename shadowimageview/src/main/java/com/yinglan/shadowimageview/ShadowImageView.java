@@ -29,9 +29,11 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
 import android.support.v7.graphics.Palette;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
@@ -54,6 +56,8 @@ public class ShadowImageView extends RelativeLayout {
     private int mVShadow; // 垂直阴影的位置
     private int mBlur; // 模糊的距离
     private int mShadowColor = -147483648; // 阴影颜色
+    private int mSrcWidth;
+    private int mSrcHeight;
 
     public ShadowImageView(Context context) {
         this(context, null);
@@ -69,16 +73,18 @@ public class ShadowImageView extends RelativeLayout {
     }
 
     private void initView(Context context, AttributeSet attrs) {
-        setPadding(80, 40, 80, 120);
         setGravity(Gravity.CENTER);
         setLayerType(LAYER_TYPE_SOFTWARE, null);
-
+        setClipChildren(false);
+        setClipToPadding(false);
         int imageresource = -1;
         if (attrs != null) {
             TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.ShadowImageView);
             if (a.hasValue(R.styleable.ShadowImageView_src)) {
                 imageresource = a.getResourceId(R.styleable.ShadowImageView_src, -1);
             }
+            mSrcWidth = a.getDimensionPixelSize(R.styleable.ShadowImageView_srcWidth, 0);
+            mSrcHeight = a.getDimensionPixelSize(R.styleable.ShadowImageView_srcHeight, 0);
             int round = a.getDimensionPixelSize(R.styleable.ShadowImageView_round, 0);
             mLeftTopRound = round;
             mRightTopRound = round;
@@ -99,6 +105,7 @@ public class ShadowImageView extends RelativeLayout {
         }
 
         roundImageView = new RoundImageView(context);
+        roundImageView.setBackgroundColor(Color.RED);
         roundImageView.setScaleType(ImageView.ScaleType.FIT_XY);
         if (imageresource == -1) {
             roundImageView.setImageResource(android.R.color.transparent);
@@ -109,8 +116,8 @@ public class ShadowImageView extends RelativeLayout {
         if (this.mShadowColor == Color.parseColor("#8D8D8D")) {
             this.mShadowColor = -147483648;
         }
-
-        addView(roundImageView);
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(mSrcWidth, mSrcHeight);
+        addView(roundImageView, params);
 
         getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -233,7 +240,7 @@ public class ShadowImageView extends RelativeLayout {
 
         if (((ImageView) view).getDrawable() instanceof ColorDrawable) {
             rgb = ((ColorDrawable) ((ImageView) view).getDrawable()).getColor();
-            shadowPaint.setShadowLayer(40, 0, 28, getDarkerColor(rgb));
+            shadowPaint.setShadowLayer(mBlur, mHShadow, mVShadow, getDarkerColor(rgb));
         } else if (((ImageView) view).getDrawable() instanceof BitmapDrawable) {
             bitmap = ((BitmapDrawable) ((ImageView) view).getDrawable()).getBitmap();
             Palette.Swatch mSwatch = Palette.from(bitmap).generate().getDominantSwatch();
@@ -245,8 +252,8 @@ public class ShadowImageView extends RelativeLayout {
             }
 
             shadowPaint.setShadowLayer(mBlur, mHShadow, mVShadow, getDarkerColor(rgb));
-            Bitmap bitmapT = Bitmap.createBitmap(bitmap, 0, bitmap.getHeight() / 4 * 3,
-                    bitmap.getWidth(), bitmap.getHeight() / 4);
+            Bitmap bitmapT = Bitmap.createBitmap(bitmap, 0, 0,
+                    bitmap.getWidth(), bitmap.getHeight());
 
             if (null != Palette.from(bitmapT).generate().getDominantSwatch()) {
                 rgb = Palette.from(bitmapT).generate().getDominantSwatch().getRgb();
