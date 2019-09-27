@@ -274,8 +274,7 @@ public class ShadowImageView extends RelativeLayout {
         if (this.mShadowColor != -147483648) {
             shadowPaint.setShadowLayer(mBlur, mHShadow, mVShadow, this.mShadowColor);
         }
-
-        RectF rectF = new RectF(view.getX() - mBorderWidth, view.getY() - mBorderWidth, view.getX() + view.getWidth() + mBorderWidth, view.getY() + view.getHeight() + mBorderWidth);
+        RectF rectF = new RectF(view.getX() - mBorderWidth + 3, view.getY() - mBorderWidth + 3, view.getX() + view.getWidth() + mBorderWidth - 3, view.getY() + view.getHeight() + mBorderWidth - 3);
 
         float[] radiusArray = {mLeftTopRound, mLeftTopRound, mRightTopRound, mRightTopRound, mRightBottomRound, mRightBottomRound, mLeftBottomRound, mLeftBottomRound};
         Path path = new Path();
