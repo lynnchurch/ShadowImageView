@@ -9,14 +9,17 @@
 
     <com.yinglan.shadowimageview.ShadowImageView
         android:id="@+id/shadow"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="80dp"
+        android:paddingLeft="40dp"
+        android:paddingTop="50dp"
+        android:paddingRight="40dp"
+        android:paddingBottom="50dp"
         app:round="0dp"
-        app:shadowColor="@color/colorPrimary"
+        app:shadowColor="#000000"
         app:src="@mipmap/lotus"
         app:srcHeight="200dp"
-        app:srcWidth="200dp" />
+        app:srcWidth="match_parent" />
 
     <android.support.v7.widget.AppCompatSeekBar
         android:id="@+id/sbLeftTopRound"
@@ -28,7 +31,6 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
         android:text="左上圆角"
         android:textColor="#000" />
 
@@ -42,7 +44,6 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
         android:text="右上圆角"
         android:textColor="#000" />
 
@@ -56,7 +57,6 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
         android:text="右下圆角"
         android:textColor="#000" />
 
@@ -70,7 +70,6 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
         android:text="左下圆角"
         android:textColor="#000" />
 
@@ -85,7 +84,6 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
         android:text="阴影水平偏移"
         android:textColor="#000" />
 
@@ -100,8 +98,20 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
         android:text="阴影垂直偏移"
+        android:textColor="#000" />
+
+    <android.support.v7.widget.AppCompatSeekBar
+        android:id="@+id/sbBorder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:max="50" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="描边大小"
         android:textColor="#000" />
 
     <android.support.v7.widget.AppCompatSeekBar
@@ -114,7 +124,6 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
         android:text="阴影模糊范围"
         android:textColor="#000" />
 

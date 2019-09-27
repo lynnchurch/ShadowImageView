@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     private AppCompatSeekBar sbHShadow;
     private AppCompatSeekBar sbVShadow;
     private AppCompatSeekBar sbBlur;
+    private AppCompatSeekBar sbBorder;
     private int resId = 1;
 
 
@@ -34,14 +35,15 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        shadow = (ShadowImageView) findViewById(R.id.shadow);
-        sbLeftTopRound = (AppCompatSeekBar) findViewById(R.id.sbLeftTopRound);
-        sbRightTopRound = (AppCompatSeekBar) findViewById(R.id.sbRightTopRound);
-        sbRightBottomRound = (AppCompatSeekBar) findViewById(R.id.sbRightBottomRound);
-        sbLeftBottomRound = (AppCompatSeekBar) findViewById(R.id.sbLeftBottomRound);
-        sbHShadow = (AppCompatSeekBar) findViewById(R.id.sbHShadow);
-        sbVShadow = (AppCompatSeekBar) findViewById(R.id.sbVShadow);
-        sbBlur = (AppCompatSeekBar) findViewById(R.id.sbBlur);
+        shadow = findViewById(R.id.shadow);
+        sbLeftTopRound = findViewById(R.id.sbLeftTopRound);
+        sbRightTopRound = findViewById(R.id.sbRightTopRound);
+        sbRightBottomRound = findViewById(R.id.sbRightBottomRound);
+        sbLeftBottomRound = findViewById(R.id.sbLeftBottomRound);
+        sbHShadow = findViewById(R.id.sbHShadow);
+        sbVShadow = findViewById(R.id.sbVShadow);
+        sbBorder = findViewById(R.id.sbBorder);
+        sbBlur = findViewById(R.id.sbBlur);
 
         shadow.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,6 +87,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         sbLeftBottomRound.setOnSeekBarChangeListener(this);
         sbHShadow.setOnSeekBarChangeListener(this);
         sbVShadow.setOnSeekBarChangeListener(this);
+        sbBorder.setOnSeekBarChangeListener(this);
         sbBlur.setOnSeekBarChangeListener(this);
 
         loadNetImage();
@@ -147,6 +150,8 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             case R.id.sbVShadow:
                 shadow.setVShadow(progress - 50).refresh();
                 break;
+            case R.id.sbBorder:
+                shadow.setBorderWidth(progress).refresh();
             case R.id.sbBlur:
                 shadow.setBlur(progress).refresh();
                 break;

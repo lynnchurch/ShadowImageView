@@ -10,9 +10,19 @@
         <attr name="hShadow" format="dimension" />
         <attr name="vShadow" format="dimension" />
         <attr name="blur" format="dimension" />
+        <attr name="borderWidth" format="dimension" />
+        <attr name="borderColor" format="dimension" />
         <attr name="shadowColor" format="color" />
         <attr name="src" format="reference" />
-        <attr name="srcWidth" format="dimension" />
-        <attr name="srcHeight" format="dimension" />
+        <attr name="srcWidth" format="dimension|enum">
+            <enum name="fill_parent" value="-1" />
+            <enum name="match_parent" value="-1" />
+            <enum name="wrap_content" value="-2" />
+        </attr>
+        <attr name="srcHeight" format="dimension|enum">
+            <enum name="fill_parent" value="-1" />
+            <enum name="match_parent" value="-1" />
+            <enum name="wrap_content" value="-2" />
+        </attr>
     </declare-styleable>
 </resources>

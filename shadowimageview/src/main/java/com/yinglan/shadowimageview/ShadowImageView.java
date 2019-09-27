@@ -29,11 +29,9 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
 import android.support.v7.graphics.Palette;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
@@ -54,6 +52,8 @@ public class ShadowImageView extends RelativeLayout {
     private int mRightBottomRound = 0;
     private int mHShadow; // 水平阴影的位置
     private int mVShadow; // 垂直阴影的位置
+    private int mBorderWidth; // 描边大小
+    private int mBorderColor; // 描边颜色
     private int mBlur; // 模糊的距离
     private int mShadowColor = -147483648; // 阴影颜色
     private int mSrcWidth;
@@ -83,8 +83,8 @@ public class ShadowImageView extends RelativeLayout {
             if (a.hasValue(R.styleable.ShadowImageView_src)) {
                 imageresource = a.getResourceId(R.styleable.ShadowImageView_src, -1);
             }
-            mSrcWidth = a.getDimensionPixelSize(R.styleable.ShadowImageView_srcWidth, 0);
-            mSrcHeight = a.getDimensionPixelSize(R.styleable.ShadowImageView_srcHeight, 0);
+            mSrcWidth = a.getLayoutDimension(R.styleable.ShadowImageView_srcWidth, 0);
+            mSrcHeight = a.getLayoutDimension(R.styleable.ShadowImageView_srcHeight, 0);
             int round = a.getDimensionPixelSize(R.styleable.ShadowImageView_round, 0);
             mLeftTopRound = round;
             mRightTopRound = round;
@@ -96,6 +96,8 @@ public class ShadowImageView extends RelativeLayout {
             mRightBottomRound = a.getDimensionPixelSize(R.styleable.ShadowImageView_rightBottomRound, mRightBottomRound);
             mHShadow = a.getDimensionPixelSize(R.styleable.ShadowImageView_hShadow, mHShadow);
             mVShadow = a.getDimensionPixelSize(R.styleable.ShadowImageView_vShadow, mVShadow);
+            mBorderWidth = a.getDimensionPixelSize(R.styleable.ShadowImageView_borderWidth, mBorderWidth);
+            mBorderColor = a.getColor(R.styleable.ShadowImageView_borderColor, Color.BLACK);
             mBlur = a.getDimensionPixelSize(R.styleable.ShadowImageView_blur, mBlur);
             if (a.hasValue(R.styleable.ShadowImageView_shadowColor)) {
                 mShadowColor = a.getColor(R.styleable.ShadowImageView_shadowColor, Color.parseColor("#8D8D8D"));
@@ -219,6 +221,11 @@ public class ShadowImageView extends RelativeLayout {
         return this;
     }
 
+    public ShadowImageView setBorderWidth(int borderWidth) {
+        mBorderWidth = borderWidth;
+        return this;
+    }
+
     public ShadowImageView setBlur(int blur) {
         mBlur = blur;
         return this;
@@ -232,7 +239,7 @@ public class ShadowImageView extends RelativeLayout {
     protected void dispatchDraw(Canvas canvas) {
         View view = getChildAt(0);
         Paint shadowPaint = new Paint();
-        shadowPaint.setColor(mShadowColor);
+        shadowPaint.setColor(mBorderColor);
         shadowPaint.setStyle(Paint.Style.FILL);
         shadowPaint.setAntiAlias(true);
         Bitmap bitmap;
@@ -268,8 +275,7 @@ public class ShadowImageView extends RelativeLayout {
             shadowPaint.setShadowLayer(mBlur, mHShadow, mVShadow, this.mShadowColor);
         }
 
-        RectF rectF = new RectF(view.getX(), view.getY(), view.getX() + view.getWidth(), view.getY() + view.getHeight());
-//            canvas.drawRoundRect(rectF, mRound, mRound, shadowPaint);
+        RectF rectF = new RectF(view.getX() - mBorderWidth, view.getY() - mBorderWidth, view.getX() + view.getWidth() + mBorderWidth, view.getY() + view.getHeight() + mBorderWidth);
 
         float[] radiusArray = {mLeftTopRound, mLeftTopRound, mRightTopRound, mRightTopRound, mRightBottomRound, mRightBottomRound, mLeftBottomRound, mLeftBottomRound};
         Path path = new Path();
