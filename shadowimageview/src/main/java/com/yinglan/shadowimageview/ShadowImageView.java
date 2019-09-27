@@ -21,6 +21,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
@@ -44,10 +45,15 @@ import android.widget.RelativeLayout;
  * ================================================
  */
 public class ShadowImageView extends RelativeLayout {
-
-    private int shadowRound = 0;
-    private int shadowColor = -147483648;
-    private boolean mInvalidat;
+    private RoundImageView roundImageView;
+    private int mLeftTopRound = 0;
+    private int mLeftBottomRound = 0;
+    private int mRightTopRound = 0;
+    private int mRightBottomRound = 0;
+    private int mHShadow; // 水平阴影的位置
+    private int mVShadow; // 垂直阴影的位置
+    private int mBlur; // 模糊的距离
+    private int mShadowColor = -147483648; // 阴影颜色
 
     public ShadowImageView(Context context) {
         this(context, null);
@@ -70,20 +76,29 @@ public class ShadowImageView extends RelativeLayout {
         int imageresource = -1;
         if (attrs != null) {
             TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.ShadowImageView);
-            if (a.hasValue(R.styleable.ShadowImageView_shadowSrc)) {
-                imageresource = a.getResourceId(R.styleable.ShadowImageView_shadowSrc, -1);
+            if (a.hasValue(R.styleable.ShadowImageView_src)) {
+                imageresource = a.getResourceId(R.styleable.ShadowImageView_src, -1);
             }
-            shadowRound = a.getDimensionPixelSize(R.styleable.ShadowImageView_shadowRound, shadowRound);
+            int round = a.getDimensionPixelSize(R.styleable.ShadowImageView_round, 0);
+            mLeftTopRound = round;
+            mRightTopRound = round;
+            mRightBottomRound = round;
+            mLeftBottomRound = round;
+            mLeftTopRound = a.getDimensionPixelSize(R.styleable.ShadowImageView_leftTopRound, mLeftTopRound);
+            mLeftBottomRound = a.getDimensionPixelSize(R.styleable.ShadowImageView_leftBottomRound, mLeftBottomRound);
+            mRightTopRound = a.getDimensionPixelSize(R.styleable.ShadowImageView_rightTopRound, mRightTopRound);
+            mRightBottomRound = a.getDimensionPixelSize(R.styleable.ShadowImageView_rightBottomRound, mRightBottomRound);
+            mHShadow = a.getDimensionPixelSize(R.styleable.ShadowImageView_hShadow, mHShadow);
+            mVShadow = a.getDimensionPixelSize(R.styleable.ShadowImageView_vShadow, mVShadow);
+            mBlur = a.getDimensionPixelSize(R.styleable.ShadowImageView_blur, mBlur);
             if (a.hasValue(R.styleable.ShadowImageView_shadowColor)) {
-                shadowColor = a.getColor(R.styleable.ShadowImageView_shadowColor, Color.parseColor("#8D8D8D"));
+                mShadowColor = a.getColor(R.styleable.ShadowImageView_shadowColor, Color.parseColor("#8D8D8D"));
             }
         } else {
-            float density = context.getResources().getDisplayMetrics().density;
-            shadowRound = (int) (shadowRound * density);
             imageresource = -1;
         }
 
-        RoundImageView roundImageView = new RoundImageView(context);
+        roundImageView = new RoundImageView(context);
         roundImageView.setScaleType(ImageView.ScaleType.FIT_XY);
         if (imageresource == -1) {
             roundImageView.setImageResource(android.R.color.transparent);
@@ -91,8 +106,8 @@ public class ShadowImageView extends RelativeLayout {
             roundImageView.setImageResource(imageresource);
         }
 
-        if (this.shadowColor == Color.parseColor("#8D8D8D")) {
-            this.shadowColor = -147483648;
+        if (this.mShadowColor == Color.parseColor("#8D8D8D")) {
+            this.mShadowColor = -147483648;
         }
 
         addView(roundImageView);
@@ -110,107 +125,150 @@ public class ShadowImageView extends RelativeLayout {
                     }
                     N = getChildCount();
                 }
-
-                ((RoundImageView) getChildAt(0)).setRound(shadowRound);
-                mInvalidat = true;
+                roundImageView.setLeftTopRound(mLeftTopRound);
+                roundImageView.setLeftBottomRound(mLeftBottomRound);
+                roundImageView.setRightTopRound(mRightTopRound);
+                roundImageView.setRightBottomRound(mRightBottomRound);
             }
         });
     }
 
-    public void setImageResource(int resId) {
-        ((RoundImageView) getChildAt(0)).setImageResource(resId);
-        invalidate();
-        mInvalidat = true;
+    public ShadowImageView setImageResource(int resId) {
+        roundImageView.setImageResource(resId);
+        return this;
     }
 
-    public void setImageDrawable(Drawable drawable) {
-        ((RoundImageView) getChildAt(0)).setImageDrawable(drawable);
-        invalidate();
-        mInvalidat = true;
+    public ShadowImageView setImageDrawable(Drawable drawable) {
+        roundImageView.setImageDrawable(drawable);
+        return this;
     }
 
-    public void setImageBitmap(Bitmap bitmap) {
-        ((RoundImageView) getChildAt(0)).setImageBitmap(bitmap);
-        invalidate();
-        mInvalidat = true;
+    public ShadowImageView setImageBitmap(Bitmap bitmap) {
+        roundImageView.setImageBitmap(bitmap);
+        return this;
     }
 
-    public void setImageShadowColor(@ColorInt int color) {
-        this.shadowColor = color;
+    public ShadowImageView setImageShadowColor(@ColorInt int color) {
+        mShadowColor = color;
+        return this;
     }
 
-    public void setImageRadius(int radius) {
-        if (radius > getChildAt(0).getWidth() / 2 || radius > getChildAt(0).getHeight() / 2) {
-            if (getChildAt(0).getWidth() > getChildAt(0).getHeight()) {
-                radius = getChildAt(0).getHeight() / 2;
+    public ShadowImageView setRound(int round) {
+        round = filterRound(round);
+        mLeftTopRound = round;
+        mRightTopRound = round;
+        mRightBottomRound = round;
+        mLeftBottomRound = round;
+        roundImageView.setRound(round);
+        return this;
+    }
+
+    public ShadowImageView setLeftTopRound(int leftTopRound) {
+        leftTopRound = filterRound(leftTopRound);
+        mLeftTopRound = leftTopRound;
+        roundImageView.setLeftTopRound(leftTopRound);
+        return this;
+    }
+
+    public ShadowImageView setRightTopRound(int rightTopRound) {
+        rightTopRound = filterRound(rightTopRound);
+        mRightTopRound = rightTopRound;
+        roundImageView.setRightTopRound(rightTopRound);
+        return this;
+    }
+
+    public ShadowImageView setRightBottomRound(int rightBottomRound) {
+        rightBottomRound = filterRound(rightBottomRound);
+        mRightBottomRound = rightBottomRound;
+        roundImageView.setRightBottomRound(rightBottomRound);
+        return this;
+    }
+
+    public ShadowImageView setLeftBottomRound(int leftBottomRound) {
+        leftBottomRound = filterRound(leftBottomRound);
+        mLeftBottomRound = leftBottomRound;
+        roundImageView.setLeftBottomRound(leftBottomRound);
+        return this;
+    }
+
+    private int filterRound(int round) {
+        if (round > roundImageView.getWidth() / 2 || round > roundImageView.getHeight() / 2) {
+            if (roundImageView.getWidth() > roundImageView.getHeight()) {
+                round = roundImageView.getHeight() / 2;
             } else {
-                radius = getChildAt(0).getWidth() / 2;
+                round = roundImageView.getWidth() / 2;
             }
         }
+        return round;
+    }
 
-        this.shadowRound = radius;
-        ((RoundImageView) getChildAt(0)).setRound(shadowRound);
+    public ShadowImageView setHShadow(int hShadow) {
+        mHShadow = hShadow;
+        return this;
+    }
+
+    public ShadowImageView setVShadow(int vShadow) {
+        mVShadow = vShadow;
+        return this;
+    }
+
+    public ShadowImageView setBlur(int blur) {
+        mBlur = blur;
+        return this;
+    }
+
+    public void refresh() {
         invalidate();
-        mInvalidat = true;
     }
 
     @Override
     protected void dispatchDraw(Canvas canvas) {
+        View view = getChildAt(0);
+        Paint shadowPaint = new Paint();
+        shadowPaint.setColor(mShadowColor);
+        shadowPaint.setStyle(Paint.Style.FILL);
+        shadowPaint.setAntiAlias(true);
+        Bitmap bitmap;
+        int rgb;
 
-        if (mInvalidat) {
+        if (((ImageView) view).getDrawable() instanceof ColorDrawable) {
+            rgb = ((ColorDrawable) ((ImageView) view).getDrawable()).getColor();
+            shadowPaint.setShadowLayer(40, 0, 28, getDarkerColor(rgb));
+        } else if (((ImageView) view).getDrawable() instanceof BitmapDrawable) {
+            bitmap = ((BitmapDrawable) ((ImageView) view).getDrawable()).getBitmap();
+            Palette.Swatch mSwatch = Palette.from(bitmap).generate().getDominantSwatch();
 
-            mInvalidat = false;
-
-            View view = getChildAt(0);
-
-            Paint shadowPaint = new Paint();
-
-            shadowPaint.setColor(Color.WHITE);
-            shadowPaint.setStyle(Paint.Style.FILL);
-            shadowPaint.setAntiAlias(true);
-
-            int radius = view.getHeight() / 12 > 40 ? 40 : view.getHeight() / 12;
-            int shadowDimen = view.getHeight() / 16 > 28 ? 28 : view.getHeight() / 16;
-
-            Bitmap bitmap;
-            int rgb;
-
-            if (((ImageView) view).getDrawable() instanceof ColorDrawable) {
-                rgb = ((ColorDrawable) ((ImageView) view).getDrawable()).getColor();
-                shadowPaint.setShadowLayer(40, 0, 28, getDarkerColor(rgb));
-            } else if (((ImageView) view).getDrawable() instanceof BitmapDrawable) {
-                bitmap = ((BitmapDrawable) ((ImageView) view).getDrawable()).getBitmap();
-                Palette.Swatch mSwatch = Palette.from(bitmap).generate().getDominantSwatch();
-
-                if (null != mSwatch) {
-                    rgb = mSwatch.getRgb();
-                } else {
-                    rgb = Color.parseColor("#8D8D8D");
-                }
-
-                shadowPaint.setShadowLayer(radius, 0, shadowDimen, getDarkerColor(rgb));
-                Bitmap bitmapT = Bitmap.createBitmap(bitmap, 0, bitmap.getHeight() / 4 * 3,
-                        bitmap.getWidth(), bitmap.getHeight() / 4);
-
-                if (null != Palette.from(bitmapT).generate().getDominantSwatch()) {
-                    rgb = Palette.from(bitmapT).generate().getDominantSwatch().getRgb();
-                    shadowPaint.setShadowLayer(radius, 0, shadowDimen, rgb);
-                }
+            if (null != mSwatch) {
+                rgb = mSwatch.getRgb();
             } else {
                 rgb = Color.parseColor("#8D8D8D");
-                shadowPaint.setShadowLayer(radius, 0, shadowDimen, getDarkerColor(rgb));
             }
 
-            if (this.shadowColor != -147483648) {
-                shadowPaint.setShadowLayer(radius, 0, shadowDimen, this.shadowColor);
+            shadowPaint.setShadowLayer(mBlur, mHShadow, mVShadow, getDarkerColor(rgb));
+            Bitmap bitmapT = Bitmap.createBitmap(bitmap, 0, bitmap.getHeight() / 4 * 3,
+                    bitmap.getWidth(), bitmap.getHeight() / 4);
+
+            if (null != Palette.from(bitmapT).generate().getDominantSwatch()) {
+                rgb = Palette.from(bitmapT).generate().getDominantSwatch().getRgb();
+                shadowPaint.setShadowLayer(mBlur, mHShadow, mVShadow, rgb);
             }
-
-            RectF rectF = new RectF(view.getX() + (view.getWidth() / 20), view.getY(), view.getX() + view.getWidth() - (view.getWidth() / 20), view.getY() + view.getHeight() - ((view.getHeight() / 40)));
-
-            canvas.drawRoundRect(rectF, shadowRound, shadowRound, shadowPaint);
-
-            canvas.save();
+        } else {
+            rgb = Color.parseColor("#8D8D8D");
+            shadowPaint.setShadowLayer(mBlur, mHShadow, mVShadow, getDarkerColor(rgb));
         }
+
+        if (this.mShadowColor != -147483648) {
+            shadowPaint.setShadowLayer(mBlur, mHShadow, mVShadow, this.mShadowColor);
+        }
+
+        RectF rectF = new RectF(view.getX(), view.getY(), view.getX() + view.getWidth(), view.getY() + view.getHeight());
+//            canvas.drawRoundRect(rectF, mRound, mRound, shadowPaint);
+
+        float[] radiusArray = {mLeftTopRound, mLeftTopRound, mRightTopRound, mRightTopRound, mRightBottomRound, mRightBottomRound, mLeftBottomRound, mLeftBottomRound};
+        Path path = new Path();
+        path.addRoundRect(rectF, radiusArray, Path.Direction.CW);
+        canvas.drawPath(path, shadowPaint);
+        canvas.save();
         super.dispatchDraw(canvas);
     }
 

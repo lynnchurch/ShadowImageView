@@ -2,9 +2,15 @@
 <resources>
 
     <declare-styleable name="ShadowImageView">
-        <attr name="shadowRound" format="dimension" />
-        <attr name="shadowSrc" format="reference" />
+        <attr name="round" format="dimension" />
+        <attr name="leftTopRound" format="dimension" />
+        <attr name="leftBottomRound" format="dimension" />
+        <attr name="rightTopRound" format="dimension" />
+        <attr name="rightBottomRound" format="dimension" />
+        <attr name="hShadow" format="dimension" />
+        <attr name="vShadow" format="dimension" />
+        <attr name="blur" format="dimension" />
         <attr name="shadowColor" format="color" />
+        <attr name="src" format="reference" />
     </declare-styleable>
-
 </resources>

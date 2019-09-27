@@ -1,7 +1,6 @@
 package com.yinglan.shadowdemo;
 
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatSeekBar;
@@ -17,10 +16,16 @@ import com.nostra13.universalimageloader.core.download.BaseImageDownloader;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.yinglan.shadowimageview.ShadowImageView;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener {
 
-    private com.yinglan.shadowimageview.ShadowImageView shadow;
-    private AppCompatSeekBar seekBar;
+    private ShadowImageView shadow;
+    private AppCompatSeekBar sbLeftTopRound;
+    private AppCompatSeekBar sbRightTopRound;
+    private AppCompatSeekBar sbRightBottomRound;
+    private AppCompatSeekBar sbLeftBottomRound;
+    private AppCompatSeekBar sbHShadow;
+    private AppCompatSeekBar sbVShadow;
+    private AppCompatSeekBar sbBlur;
     private int resId = 1;
 
 
@@ -29,8 +34,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        this.shadow = (ShadowImageView) findViewById(R.id.shadow);
-        this.seekBar = (AppCompatSeekBar) findViewById(R.id.seekbar);
+        shadow = (ShadowImageView) findViewById(R.id.shadow);
+        sbLeftTopRound = (AppCompatSeekBar) findViewById(R.id.sbLeftTopRound);
+        sbRightTopRound = (AppCompatSeekBar) findViewById(R.id.sbRightTopRound);
+        sbRightBottomRound = (AppCompatSeekBar) findViewById(R.id.sbRightBottomRound);
+        sbLeftBottomRound = (AppCompatSeekBar) findViewById(R.id.sbLeftBottomRound);
+        sbHShadow = (AppCompatSeekBar) findViewById(R.id.sbHShadow);
+        sbVShadow = (AppCompatSeekBar) findViewById(R.id.sbVShadow);
+        sbBlur = (AppCompatSeekBar) findViewById(R.id.sbBlur);
 
         shadow.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,23 +72,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                shadow.setImageRadius(progress);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-
+        sbLeftTopRound.setOnSeekBarChangeListener(this);
+        sbRightTopRound.setOnSeekBarChangeListener(this);
+        sbRightBottomRound.setOnSeekBarChangeListener(this);
+        sbLeftBottomRound.setOnSeekBarChangeListener(this);
+        sbHShadow.setOnSeekBarChangeListener(this);
+        sbVShadow.setOnSeekBarChangeListener(this);
+        sbBlur.setOnSeekBarChangeListener(this);
 
         loadNetImage();
     }
@@ -109,12 +110,49 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-                ((ShadowImageView)findViewById(R.id.shadowd)).setImageBitmap(loadedImage);
+                ((ShadowImageView) findViewById(R.id.shadow)).setImageBitmap(loadedImage);
             }
 
             @Override
             public void onLoadingCancelled(String imageUri, View view) {
             }
         });
+    }
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        switch (seekBar.getId()) {
+            case R.id.sbLeftTopRound:
+                shadow.setLeftTopRound(progress).refresh();
+                break;
+            case R.id.sbRightTopRound:
+                shadow.setRightTopRound(progress).refresh();
+                break;
+            case R.id.sbRightBottomRound:
+                shadow.setRightBottomRound(progress).refresh();
+                break;
+            case R.id.sbLeftBottomRound:
+                shadow.setLeftBottomRound(progress).refresh();
+                break;
+            case R.id.sbHShadow:
+                shadow.setHShadow(progress - 50).refresh();
+                break;
+            case R.id.sbVShadow:
+                shadow.setVShadow(progress - 50).refresh();
+                break;
+            case R.id.sbBlur:
+                shadow.setBlur(progress).refresh();
+                break;
+        }
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+
     }
 }

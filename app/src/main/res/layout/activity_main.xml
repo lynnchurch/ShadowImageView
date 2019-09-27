@@ -4,28 +4,115 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
+    android:gravity="center_horizontal"
     android:orientation="vertical">
 
     <com.yinglan.shadowimageview.ShadowImageView
         android:id="@+id/shadow"
         android:layout_width="300dp"
         android:layout_height="300dp"
-        app:shadowRound="0dp"
-        app:shadowSrc="@mipmap/android0" />
+        app:round="0dp"
+        app:shadowColor="@color/colorPrimary"
+        app:src="@mipmap/lotus" />
 
     <android.support.v7.widget.AppCompatSeekBar
-        android:id="@+id/seekbar"
+        android:id="@+id/sbLeftTopRound"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:max="500" />
 
-    <com.yinglan.shadowimageview.ShadowImageView
-        android:layout_marginTop="20dp"
-        android:id="@+id/shadowd"
-        android:layout_width="300dp"
-        android:layout_height="150dp"
-        app:shadowRound="5dp"
-        app:shadowSrc="@mipmap/lotus"
-        app:shadowColor="@color/colorPrimary"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="左上圆角"
+        android:textColor="#000" />
+
+    <android.support.v7.widget.AppCompatSeekBar
+        android:id="@+id/sbRightTopRound"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:max="500" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="右上圆角"
+        android:textColor="#000" />
+
+    <android.support.v7.widget.AppCompatSeekBar
+        android:id="@+id/sbRightBottomRound"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:max="500" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="右下圆角"
+        android:textColor="#000" />
+
+    <android.support.v7.widget.AppCompatSeekBar
+        android:id="@+id/sbLeftBottomRound"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:max="500" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="左下圆角"
+        android:textColor="#000" />
+
+    <android.support.v7.widget.AppCompatSeekBar
+        android:id="@+id/sbHShadow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:max="100"
+        android:progress="50" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="阴影水平偏移"
+        android:textColor="#000" />
+
+    <android.support.v7.widget.AppCompatSeekBar
+        android:id="@+id/sbVShadow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:max="100"
+        android:progress="50" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="阴影垂直偏移"
+        android:textColor="#000" />
+
+    <android.support.v7.widget.AppCompatSeekBar
+        android:id="@+id/sbBlur"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:max="100" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="阴影模糊范围"
+        android:textColor="#000" />
 
 </LinearLayout>
