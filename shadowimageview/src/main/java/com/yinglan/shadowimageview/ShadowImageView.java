@@ -274,7 +274,9 @@ public class ShadowImageView extends RelativeLayout {
         if (this.mShadowColor != -147483648) {
             shadowPaint.setShadowLayer(mBlur, mHShadow, mVShadow, this.mShadowColor);
         }
-        RectF rectF = new RectF(view.getX() - mBorderWidth + 3, view.getY() - mBorderWidth + 3, view.getX() + view.getWidth() + mBorderWidth - 3, view.getY() + view.getHeight() + mBorderWidth - 3);
+        // 加个偏移值，否则当描边颜色与阴影颜色不一致时圆角显示会有瑕疵
+        int offset = 1;
+        RectF rectF = new RectF(view.getX() - mBorderWidth + offset, view.getY() - mBorderWidth + offset, view.getX() + view.getWidth() + mBorderWidth - offset, view.getY() + view.getHeight() + mBorderWidth - offset);
 
         float[] radiusArray = {mLeftTopRound, mLeftTopRound, mRightTopRound, mRightTopRound, mRightBottomRound, mRightBottomRound, mLeftBottomRound, mLeftBottomRound};
         Path path = new Path();
@@ -292,5 +294,9 @@ public class ShadowImageView extends RelativeLayout {
         hsv[2] = hsv[2] - 0.1f;
         int darkerColor = Color.HSVToColor(hsv);
         return darkerColor;
+    }
+
+    public RoundImageView getRoundImageView() {
+        return roundImageView;
     }
 }
