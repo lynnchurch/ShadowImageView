@@ -107,7 +107,6 @@ public class ShadowImageView extends RelativeLayout {
         }
 
         roundImageView = new RoundImageView(context);
-        roundImageView.setBackgroundColor(Color.RED);
         roundImageView.setScaleType(ImageView.ScaleType.FIT_XY);
         if (imageresource == -1) {
             roundImageView.setImageResource(android.R.color.transparent);
