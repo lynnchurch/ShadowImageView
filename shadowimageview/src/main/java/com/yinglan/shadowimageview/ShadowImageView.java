@@ -30,6 +30,7 @@ import android.support.annotation.ColorInt;
 import android.support.v7.graphics.Palette;
 import android.util.AttributeSet;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
@@ -106,7 +107,7 @@ public class ShadowImageView extends RelativeLayout {
             imageresource = -1;
         }
 
-        roundImageView = new RoundImageView(context);
+        roundImageView = (RoundImageView) LayoutInflater.from(context).inflate(R.layout.round_image_view, this, false);
         roundImageView.setScaleType(ImageView.ScaleType.FIT_XY);
         if (imageresource == -1) {
             roundImageView.setImageResource(android.R.color.transparent);
@@ -273,10 +274,8 @@ public class ShadowImageView extends RelativeLayout {
         if (this.mShadowColor != -147483648) {
             shadowPaint.setShadowLayer(mBlur, mHShadow, mVShadow, this.mShadowColor);
         }
-        // 加个偏移值，否则当描边颜色与阴影颜色不一致时圆角显示会有瑕疵
         int offset = 1;
         RectF rectF = new RectF(view.getX() - mBorderWidth + offset, view.getY() - mBorderWidth + offset, view.getX() + view.getWidth() + mBorderWidth - offset, view.getY() + view.getHeight() + mBorderWidth - offset);
-
         float[] radiusArray = {mLeftTopRound, mLeftTopRound, mRightTopRound, mRightTopRound, mRightBottomRound, mRightBottomRound, mLeftBottomRound, mLeftBottomRound};
         Path path = new Path();
         path.addRoundRect(rectF, radiusArray, Path.Direction.CW);
