@@ -22,6 +22,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.PorterDuff;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
@@ -29,6 +30,7 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
 import android.support.v7.graphics.Palette;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -237,19 +239,19 @@ public class ShadowImageView extends RelativeLayout {
 
     @Override
     protected void dispatchDraw(Canvas canvas) {
-        View view = getChildAt(0);
         Paint shadowPaint = new Paint();
         shadowPaint.setColor(mBorderColor);
         shadowPaint.setStyle(Paint.Style.FILL);
+        shadowPaint.setDither(false);
         shadowPaint.setAntiAlias(true);
         Bitmap bitmap;
         int rgb;
 
-        if (((ImageView) view).getDrawable() instanceof ColorDrawable) {
-            rgb = ((ColorDrawable) ((ImageView) view).getDrawable()).getColor();
+        if (roundImageView.getDrawable() instanceof ColorDrawable) {
+            rgb = ((ColorDrawable) roundImageView.getDrawable()).getColor();
             shadowPaint.setShadowLayer(mBlur, mHShadow, mVShadow, getDarkerColor(rgb));
-        } else if (((ImageView) view).getDrawable() instanceof BitmapDrawable) {
-            bitmap = ((BitmapDrawable) ((ImageView) view).getDrawable()).getBitmap();
+        } else if (roundImageView.getDrawable() instanceof BitmapDrawable) {
+            bitmap = ((BitmapDrawable) roundImageView.getDrawable()).getBitmap();
             Palette.Swatch mSwatch = Palette.from(bitmap).generate().getDominantSwatch();
 
             if (null != mSwatch) {
@@ -274,16 +276,46 @@ public class ShadowImageView extends RelativeLayout {
         if (this.mShadowColor != -147483648) {
             shadowPaint.setShadowLayer(mBlur, mHShadow, mVShadow, this.mShadowColor);
         }
-        int offset = 1;
-        RectF rectF = new RectF(view.getX() - mBorderWidth + offset, view.getY() - mBorderWidth + offset, view.getX() + view.getWidth() + mBorderWidth - offset, view.getY() + view.getHeight() + mBorderWidth - offset);
-        float[] radiusArray = {mLeftTopRound, mLeftTopRound, mRightTopRound, mRightTopRound, mRightBottomRound, mRightBottomRound, mLeftBottomRound, mLeftBottomRound};
-        Path path = new Path();
-        path.addRoundRect(rectF, radiusArray, Path.Direction.CW);
-        canvas.drawPath(path, shadowPaint);
-        canvas.save();
+        if (mSrcWidth == mSrcHeight && mLeftTopRound == mRightTopRound && mRightTopRound == mRightBottomRound && mRightBottomRound == mLeftBottomRound && mLeftBottomRound == mLeftTopRound && mSrcWidth / 2 == mLeftTopRound) {
+            drawCircleShadow(canvas, shadowPaint);
+        } else {
+            drawRectShadow(canvas, shadowPaint);
+        }
         super.dispatchDraw(canvas);
     }
 
+    private void drawRectShadow(Canvas canvas, Paint shadowPaint) {
+        int offset = 1;
+        Path path = new Path();
+        float startX = roundImageView.getX() - mBorderWidth + offset;
+        float startY = roundImageView.getY() - mBorderWidth + offset;
+        int width = roundImageView.getWidth();
+        int height = roundImageView.getHeight();
+        float endX = startX + width + 2 * mBorderWidth - 2 * offset;
+        float endY = startY + height + 2 * mBorderWidth - 2 * offset;
+        path.moveTo(startX, startY + mLeftTopRound);
+        path.arcTo(new RectF(startX, startY, startX + 2 * mLeftTopRound, startY + 2 * mLeftTopRound), 180, 90);
+        path.lineTo(endX - mRightTopRound, startY);
+        path.arcTo(new RectF(endX - 2 * mRightTopRound, startY, endX, startY + 2 * mRightTopRound), -90, 90);
+        path.lineTo(endX, endY - mRightBottomRound);
+        path.arcTo(new RectF(endX - 2 * mRightBottomRound, endY - 2 * mRightBottomRound, endX, endY), 0, 90);
+        path.lineTo(startX + mLeftBottomRound, endY);
+        path.arcTo(new RectF(startX, endY - 2 * mLeftBottomRound, startX + 2 * mLeftBottomRound, endY), 90, 90);
+        path.lineTo(startX, startY + mLeftTopRound);
+        path.close();
+        canvas.drawPath(path, shadowPaint);
+    }
+
+    private void drawCircleShadow(Canvas canvas, Paint shadowPaint) {
+        canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+        float startX = roundImageView.getX() - mBorderWidth;
+        float startY = roundImageView.getY() - mBorderWidth;
+        int width = roundImageView.getWidth();
+        int height = roundImageView.getHeight();
+        float endX = startX + width + 2 * mBorderWidth;
+        float endY = startY + height + 2 * mBorderWidth;
+        canvas.drawCircle(startX + (endX - startX) / 2, startY + (endY - startY) / 2, (endX - startX) / 2, shadowPaint);
+    }
 
     public int getDarkerColor(int color) {
         float[] hsv = new float[3];

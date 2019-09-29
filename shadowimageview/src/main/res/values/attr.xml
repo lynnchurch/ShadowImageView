@@ -11,7 +11,7 @@
         <attr name="vShadow" format="dimension" />
         <attr name="blur" format="dimension" />
         <attr name="borderWidth" format="dimension" />
-        <attr name="borderColor" format="dimension" />
+        <attr name="borderColor" format="color" />
         <attr name="shadowColor" format="color" />
         <attr name="src" format="reference" />
         <attr name="srcWidth" format="dimension|enum">

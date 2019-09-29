@@ -152,6 +152,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                 break;
             case R.id.sbBorder:
                 shadow.setBorderWidth(progress).refresh();
+                break;
             case R.id.sbBlur:
                 shadow.setBlur(progress).refresh();
                 break;
