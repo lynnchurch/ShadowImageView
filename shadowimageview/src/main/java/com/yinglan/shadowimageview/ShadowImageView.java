@@ -126,16 +126,6 @@ public class ShadowImageView extends RelativeLayout {
         getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                int N = getChildCount();
-                for (int i = 0; i < N; i++) {
-                    View view = getChildAt(i);
-                    if (i != 0) {
-                        removeView(view);
-                        getChildCount();
-                        continue;
-                    }
-                    N = getChildCount();
-                }
                 roundImageView.setLeftTopRound(mLeftTopRound);
                 roundImageView.setLeftBottomRound(mLeftBottomRound);
                 roundImageView.setRightTopRound(mRightTopRound);
